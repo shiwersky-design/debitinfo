@@ -101,7 +101,7 @@ button:active {
 
 <div class="card">
     <label>Заполняемый обьем:</label>
-    <input type="number" id="volume" placeholder="Введите литры">
+    <input type="number" inputmode="numeric" pattern="\d*" id="volume" placeholder="Введите литры">
     <button id="start_stop" onclick="onStartStop()">Старт!</button>
 
     <div class="output">
@@ -175,4 +175,5 @@ function updateDebet() {
 
 </body>
 </html>
+
 
