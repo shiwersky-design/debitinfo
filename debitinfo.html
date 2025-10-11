@@ -123,7 +123,7 @@ h1 {
 }
 
 .message.error {
-    color: #103c60;
+    color: #ff0101;
 }
 </style>
 </head>
@@ -141,19 +141,19 @@ h1 {
             <button id="startBtn">Старт</button>
             <div class="card">
                 <h2 id="time">0.0</h2>
-                <p>Время, секунды</p>
+                <p>⏱ Время, секунды</p>
             </div>
             <div class="card">
                 <h2 id="lpm">0.0</h2>
-                <p>Литры / мин</p>
+                <p>💧 Литры / мин</p>
             </div>
             <div class="card">
                 <h2 id="lph">0.0</h2>
-                <p>Литры / час</p>
+                <p>💦 Литры / час</p>
             </div>
         </div>
 
-        <div class="message" id="message">В ожидании водички 💦</div>
+        <div class="message" id="message">В ожидании водички ... 🛁</div>
     </div>
 
 <script>
@@ -209,7 +209,7 @@ startBtn.addEventListener('click', () => {
 
     if (!volumeEl.value || parseFloat(volumeEl.value) <= 0) {
       msgEl.classList.add('error');
-      msgEl.textContent = 'Укажите заполняемый объём! 🪣';
+      msgEl.textContent = '🪣 Укажите заполняемый объём!';
       return;
     }
 
@@ -218,7 +218,7 @@ startBtn.addEventListener('click', () => {
     startBtn.classList.add('active');
     startBtn.textContent = 'Стоп';
     msgEl.classList.remove('error');
-    msgEl.textContent = 'Оцениваю поток...';
+    msgEl.textContent = 'Оцениваю поток ...';
     timerInterval = setInterval(updateTimer, 100);
   } else {
     stopTimer();
