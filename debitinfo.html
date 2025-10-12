@@ -110,26 +110,27 @@ h1 { font-size: 1.8rem; font-weight: 700; margin: 20px 0 4px; }
 }
 #startBtn.active { background: #ff3b30; }
 
-/* ===== iMessage bubble с треугольником справа внизу ===== */
+/* ===== iMessage bubble над элементами ===== */
 .message-bubble {
-    position: fixed;
-    bottom: 25px;
-    left: 50%;
-    transform: translateX(-50%);
+    position: relative;
     background: linear-gradient(135deg, #34c759, #2ebd50);
     color: white;
-    font-size: 1.1rem;
+    font-size: 1.05rem;
     font-weight: 600;
-    padding: 14px 20px;
-    border-radius: 20px;
-    border-bottom-right-radius: 0px; /* угол справа внизу */
-    box-shadow: 0 6px 12px rgba(0,0,0,0.2);
-    max-width: 80%;
+    padding: 14px 18px;
+    border-radius: 18px 18px 0 18px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    max-width: 90%;
     text-align: center;
-    pointer-events: none;
-    z-index: 1000;
-    opacity: 1;
-    transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55), opacity 0.4s ease;
+    align-self: flex-end;
+    margin: 25px auto 0;
+    animation: bubbleIn 0.4s ease-out forwards;
+    opacity: 0;
+    transform: translateY(10px);
+}
+@keyframes bubbleIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 </style>
 </head>
@@ -159,6 +160,8 @@ h1 { font-size: 1.8rem; font-weight: 700; margin: 20px 0 4px; }
             <p>💦 Литры / час</p>
         </div>
     </div>
+
+    <div id="bubble" class="message-bubble">Давай замерим твой напор 💧</div>
 </div>
 
 <script>
@@ -167,6 +170,7 @@ let timeEl = document.getElementById('time');
 let lpmEl = document.getElementById('lpm');
 let lphEl = document.getElementById('lph');
 let volumeEl = document.getElementById('volume');
+let bubble = document.getElementById('bubble');
 
 let startTime, timerInterval, running = false;
 
@@ -178,17 +182,10 @@ const resultMessages = [
   'Вот это поток! ⚡️'
 ];
 
-// создаём постоянный пузырь при загрузке страницы
-let bubble = document.createElement('div');
-bubble.className = 'message-bubble';
-bubble.textContent = 'Давай замерим твой напор';
-document.body.appendChild(bubble);
-
-// плавная смена текста пузыря
 function showBubble(text, isError = false) {
     bubble.textContent = text;
     bubble.style.opacity = 0.6;
-    bubble.style.transform = 'translateX(-50%) translateY(-15px)';
+    bubble.style.transform = 'translateY(-8px)';
 
     if (isError) {
         bubble.style.background = 'linear-gradient(135deg, #ff3b30, #ff453a)';
@@ -197,9 +194,9 @@ function showBubble(text, isError = false) {
     }
 
     setTimeout(() => {
-        bubble.style.transform = 'translateX(-50%) translateY(0)';
+        bubble.style.transform = 'translateY(0)';
         bubble.style.opacity = 1;
-    }, 100);
+    }, 120);
 
     if (navigator.vibrate) navigator.vibrate(40);
 }
