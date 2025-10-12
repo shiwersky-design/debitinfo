@@ -1,151 +1,253 @@
 <!DOCTYPE html>
-<html lang="ro">
+<html lang="ru">
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta charset="UTF-8" />
-<title>Izvornic — Debit de apă</title>
+    <link rel="icon" type="image/png" href="icon-512.png">
+    <link rel="apple-touch-icon" href="icon-512.png">
+    <meta name="theme-color" content="#8ecae6">
+    <meta name="apple-mobile-web-app-title" content="Izvornic">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Izvornic - Дебит Скважины</title>
+
 <style>
-    html, body {
-        margin: 0;
-        padding: 0;
-        height: 100%;
-        overflow: hidden; /* отключаем скролл */
-        font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont, sans-serif;
-        background: linear-gradient(to bottom, #8ecae6, #ffffff);
-        transition: background 1s ease;
-    }
+html, body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* отключаем прокрутку */
+    height: 100%;
+    touch-action: none; /* блокируем перетаскивание страницы пальцем */
+    -webkit-user-select: none; /* чтобы не выделялся текст при тапе */
+}
 
-    @keyframes flowGradient {
-        0% { background: linear-gradient(to bottom, #8ecae6, #ffffff); }
-        25% { background: linear-gradient(to bottom, #70d6ff, #b9fbc0); }
-        50% { background: linear-gradient(to bottom, #ffd6a5, #ffadad); }
-        75% { background: linear-gradient(to bottom, #caffbf, #9bf6ff); }
-        100% { background: linear-gradient(to bottom, #8ecae6, #ffffff); }
-    }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background: linear-gradient(to bottom, #8ecae6, #ffffff);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 20px;
+    color: #0d314e;
+}
 
-    body.animate-bg {
-        animation: flowGradient 6s linear infinite;
-        background-size: 200% 200%;
-    }
+h1 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin: 20px 0 4px;
+}
 
-    .container {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        height: 100%;
-        text-align: center;
-        color: #023047;
-        padding: 20px;
-        box-sizing: border-box;
-    }
+.subtitle {
+    font-size: 1rem;
+    color: #0d314e;
+    margin-bottom: 35px;
+}
 
-    h1 {
-        font-size: 1.6em;
-        margin-bottom: 30px;
-        font-weight: 600;
-    }
+.container {
+    width: 100%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
 
-    input {
-        font-size: 1.2em;
-        padding: 10px;
-        width: 140px;
-        border: 2px solid #219ebc;
-        border-radius: 12px;
-        text-align: center;
-        outline: none;
-        -webkit-appearance: none;
-    }
+.input-card {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
 
-    input:focus {
-        border-color: #023047;
-    }
+.input-card label {
+    font-weight: 600;
+    font-size: 0.95rem;
+}
 
-    button {
-        margin-top: 20px;
-        background-color: #219ebc;
-        color: white;
-        border: none;
-        padding: 12px 30px;
-        font-size: 1.1em;
-        border-radius: 20px;
-        cursor: pointer;
-        transition: background-color 0.3s;
-    }
+.input-card input {
+    border: none;
+    background: #f5f5f5;
+    border-radius: 8px;
+    width: 100px;
+    text-align: center;
+    font-size: 2.1rem;
+    color: #0d314e;
+    font-weight: 700;
+    padding: 6px 0;
+    font-family: inherit;
+    letter-spacing: -0.5px;
+    -webkit-text-size-adjust: none;
+    appearance: none;
+}
 
-    button:hover {
-        background-color: #023047;
-    }
+.grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
 
-    .results {
-        margin-top: 30px;
-        font-size: 1.1em;
-        font-weight: 500;
-    }
+.card {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    text-align: center;
+    padding: 22px 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
 
-    .timer {
-        font-size: 1.4em;
-        margin-top: 10px;
-        font-weight: bold;
-    }
+.card h2 {
+    font-size: 2.1rem;
+    margin: 0;
+    font-weight: 700;
+    min-height: 48px;
+}
+
+.card p {
+    font-size: 0.8rem;
+    margin: 6px 0 0;
+}
+
+#startBtn {
+    background: #007aff;
+    color: #fff;
+    font-size: 1.5rem;
+    border: none;
+    border-radius: 10px;
+    padding: 20px 0;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+#startBtn.active {
+    background: #ff3b30;
+}
+
+.message {
+    margin-top: 30px;
+    font-size: 1.3rem;
+    font-weight: 600;
+    text-align: center;
+}
+
+.message.error {
+    color: #ff0101;
+}
 </style>
 </head>
+
 <body>
+    <h1>IZVORNIC</h1>
+    <div class="subtitle">Дебит Скважины</div>
+
     <div class="container">
-        <h1>Izvornic — Debit de apă</h1>
-        <input id="litersInput" type="number" inputmode="decimal" placeholder="Litri">
-        <button id="startBtn">Start</button>
-        <div class="results">
-            <div id="timerDisplay" class="timer">0.0 sec</div>
-            <div id="debitMin">Debit: – L/min</div>
-            <div id="debitHour">Debit: – L/oră</div>
+        <div class="input-card">
+            <label for="volume">🪣 Заполняемый объём</label>
+            <input type="number" id="volume" value="0" inputmode="numeric">
         </div>
+
+        <div class="grid">
+            <button id="startBtn">Старт</button>
+            <div class="card">
+                <h2 id="time">0.0</h2>
+                <p>⏱ Время, секунды</p>
+            </div>
+            <div class="card">
+                <h2 id="lpm">0.0</h2>
+                <p>💧 Литры / мин</p>
+            </div>
+            <div class="card">
+                <h2 id="lph">0.0</h2>
+                <p>💦 Литры / час</p>
+            </div>
+        </div>
+
+        <div class="message" id="message">В ожидании водички ... 🛁</div>
     </div>
 
-    <script>
-        const startBtn = document.getElementById('startBtn');
-        const litersInput = document.getElementById('litersInput');
-        const timerDisplay = document.getElementById('timerDisplay');
-        const debitMin = document.getElementById('debitMin');
-        const debitHour = document.getElementById('debitHour');
+<script>
+let startBtn = document.getElementById('startBtn');
+let timeEl = document.getElementById('time');
+let lpmEl = document.getElementById('lpm');
+let lphEl = document.getElementById('lph');
+let msgEl = document.getElementById('message');
+let volumeEl = document.getElementById('volume');
 
-        let startTime, timerInterval;
-        let running = false;
+let startTime, timerInterval, running = false;
 
-        startBtn.addEventListener('click', () => {
-            if (!running) {
-                // Старт
-                startTime = Date.now();
-                timerInterval = setInterval(updateTimer, 100);
-                startBtn.textContent = "Stop";
-                running = true;
-                document.body.classList.add('animate-bg');
-            } else {
-                // Стоп
-                stopTimer();
-            }
-        });
+const resultMessages = [
+  'Отличный напор 💪',
+  'Можно качать! 🚀',
+  'Вода прет как из родника 💦',
+  'Результат впечатляет 🔥',
+  'Вот это поток! ⚡️'
+];
 
-        function updateTimer() {
-            const elapsed = (Date.now() - startTime) / 1000;
-            timerDisplay.textContent = elapsed.toFixed(1) + " sec";
+function resetValues() {
+  timeEl.textContent = '0.0';
+  lpmEl.textContent = '0.0';
+  lphEl.textContent = '0.0';
+}
 
-            const liters = parseFloat(litersInput.value);
-            if (!isNaN(liters) && elapsed > 0) {
-                const lPerSec = liters / elapsed;
-                const lPerMin = lPerSec * 60;
-                const lPerHour = lPerMin * 60;
-                debitMin.textContent = "Debit: " + lPerMin.toFixed(1) + " L/min";
-                debitHour.textContent = "Debit: " + lPerHour.toFixed(0) + " L/oră";
-            }
-        }
+function updateTimer() {
+  let elapsed = (Date.now() - startTime) / 1000;
+  timeEl.textContent = elapsed.toFixed(1);
 
-        function stopTimer() {
-            clearInterval(timerInterval);
-            running = false;
-            startBtn.textContent = "Start";
-            document.body.classList.remove('animate-bg');
-        }
-    </script>
+  let volume = parseFloat(volumeEl.value);
+  if (!isNaN(volume) && volume > 0) {
+    let lpm = (volume / elapsed) * 60;
+    let lph = lpm * 60;
+    lpmEl.textContent = lpm.toFixed(1);
+    lphEl.textContent = lph.toFixed(1);
+  }
+}
+
+function stopTimer() {
+  clearInterval(timerInterval);
+  running = false;
+  startBtn.classList.remove('active');
+  startBtn.textContent = 'Старт';
+  msgEl.classList.remove('error');
+  msgEl.textContent = resultMessages[Math.floor(Math.random() * resultMessages.length)];
+}
+
+startBtn.addEventListener('click', () => {
+  if (!running) {
+    resetValues();
+
+    if (!volumeEl.value || parseFloat(volumeEl.value) <= 0) {
+      msgEl.classList.add('error');
+      msgEl.textContent = '🪣 Укажите заполняемый объём!';
+      return;
+    }
+
+    running = true;
+    startTime = Date.now();
+    startBtn.classList.add('active');
+    startBtn.textContent = 'Стоп';
+    msgEl.classList.remove('error');
+    msgEl.textContent = 'Оцениваю поток ...';
+    timerInterval = setInterval(updateTimer, 100);
+  } else {
+    stopTimer();
+  }
+});
+
+// при фокусе поле очищается, если там 0
+volumeEl.addEventListener('focus', () => {
+  if (volumeEl.value === '0' || volumeEl.value === '0.0') volumeEl.value = '';
+});
+
+// блокируем скролл и "упругость" на iOS
+document.addEventListener('touchmove', function(event) {
+  event.preventDefault();
+}, { passive: false });
+</script>
 </body>
 </html>
