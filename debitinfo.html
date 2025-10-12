@@ -5,13 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#8ecae6">
 
-<!-- === iOS / PWA настройки === -->
-<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
-<link rel="apple-touch-icon" href="icon-512.png">
-<meta name="apple-mobile-web-app-title" content="Izvornic">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
 <title>Izvornic - Дебит Скважины</title>
 
 <style>
@@ -27,12 +20,11 @@ html, body {
     background: #6196ff;
 }
 
-/* === безопасные отступы + фоновое покрытие === */
 body {
     padding: calc(env(safe-area-inset-top) + 10px)
-             calc(env(safe-area-inset-right) + 16px)
+             calc(env(safe-area-inset-right) + 18px)
              calc(env(safe-area-inset-bottom) + 10px)
-             calc(env(safe-area-inset-left) + 16px);
+             calc(env(safe-area-inset-left) + 18px);
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
@@ -40,7 +32,7 @@ body {
     justify-content: flex-start;
     background: radial-gradient(100% 100% at var(--4-x-position, 20%) var(--4-y-position, 80%), #91ebfd -8%, transparent),
                 radial-gradient(100% 100% at var(--5-x-position, 80%) var(--5-y-position, 20%), #ffffff 0%, transparent),
-                #6196ff; /* ✅ исправлено */
+                #6196ff;
     background-attachment: fixed;
     background-repeat: no-repeat;
     background-size: cover;
@@ -48,7 +40,7 @@ body {
 }
 
 body.animate-bg {
-    animation: main 6s infinite ease-in-out; /* немного плавнее */
+    animation: main 4s infinite ease-in-out;
 }
 
 @property --4-x-position { syntax: '<percentage>'; inherits: false; initial-value: 20%; }
@@ -62,7 +54,6 @@ body.animate-bg {
     100% { --4-x-position: 20%; --4-y-position: 80%; --5-x-position: 80%; --5-y-position: 20%; }
 }
 
-/* ===== интерфейс ===== */
 h1 { font-size: 1.8rem; font-weight: 700; margin: 10px 0 4px; }
 .subtitle { font-size: 1rem; color: #0d314e; margin-bottom: 30px; }
 
@@ -135,21 +126,34 @@ h1 { font-size: 1.8rem; font-weight: 700; margin: 10px 0 4px; }
     background: linear-gradient(135deg, #34c759, #2ebd50);
     color: white;
     font-size: 1.05rem;
-    font-weight: 600;
+    font-weight: 400;
     padding: 14px 18px;
-    border-radius: 18px 18px 0 6px; /* ✅ угол справа снизу */
+    border-radius: 30px 30px 0 30px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-    max-width: 95%;
-    text-align: center;
+    max-width: 100%;
+    text-align: left;
     align-self: flex-end;
-    margin: 25px auto 0;
-    animation: bubbleIn 0.4s ease-out forwards;
+    margin: 40px auto 0;
+    animation: bubbleIn 0.9s ease-out forwards;
     opacity: 0;
     transform: translateY(10px);
 }
 @keyframes bubbleIn {
     from { opacity: 0; transform: translateY(15px); }
     to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== анимация тряски для ошибки ===== */
+@keyframes shake {
+  0% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+  100% { transform: translateX(0); }
+}
+.message-bubble.shake {
+  animation: shake 0.4s ease;
 }
 </style>
 </head>
@@ -180,7 +184,7 @@ h1 { font-size: 1.8rem; font-weight: 700; margin: 10px 0 4px; }
         </div>
     </div>
 
-    <div id="bubble" class="message-bubble">Давай замерим твой напор 💧</div>
+    <div id="bubble" class="message-bubble">Давай замерим твой напор ... 💦 😂 💪</div>
 </div>
 
 <script>
@@ -192,13 +196,14 @@ let volumeEl = document.getElementById('volume');
 let bubble = document.getElementById('bubble');
 
 let startTime, timerInterval, running = false;
+let lastMessageIndex = -1;
 
 const resultMessages = [
-  'Отличный напор 💪',
-  'Можно качать! 🚀',
-  'Вода прет как из родника 💦',
-  'Результат впечатляет 🔥',
-  'Вот это поток! ⚡️'
+  'Ведро в шоке от твоего напора! Прямо фонтанит 😂',
+  'Всё в порядке, вода летит как ракета! 🤣 🚀',
+  'Смотри, как струя бьёт! 💧😂 Почти как фонтан в парке!',
+  'Можно серфить прямо в ведро! 🤪 🏄',
+  'Поток разрывает все границы – ведро в восторге! 😎'
 ];
 
 function showBubble(text, isError = false) {
@@ -206,10 +211,14 @@ function showBubble(text, isError = false) {
     bubble.style.opacity = 0.6;
     bubble.style.transform = 'translateY(-8px)';
 
+    // Всегда зелёный фон
+    bubble.style.background = 'linear-gradient(135deg, #34c759, #2ebd50)';
+
+    // Ошибка — тряска
     if (isError) {
-        bubble.style.background = 'linear-gradient(135deg, #ff3b30, #ff453a)';
-    } else {
-        bubble.style.background = 'linear-gradient(135deg, #34c759, #2ebd50)';
+        bubble.classList.remove('shake');
+        void bubble.offsetWidth;
+        bubble.classList.add('shake');
     }
 
     setTimeout(() => {
@@ -244,7 +253,15 @@ function stopTimer() {
   running = false;
   startBtn.classList.remove('active');
   startBtn.textContent = 'Старт';
-  showBubble(resultMessages[Math.floor(Math.random() * resultMessages.length)]);
+
+  // Случайное сообщение, не повторяя предыдущее
+  let index;
+  do {
+    index = Math.floor(Math.random() * resultMessages.length);
+  } while (index === lastMessageIndex);
+  lastMessageIndex = index;
+
+  showBubble(resultMessages[index]);
   document.body.classList.remove('animate-bg');
 }
 
@@ -253,7 +270,7 @@ startBtn.addEventListener('click', () => {
     resetValues();
 
     if (!volumeEl.value || parseFloat(volumeEl.value) <= 0) {
-      showBubble('🪣 Укажите заполняемый объём!', true);
+      showBubble('Введи литры, я хочу почувствовать настоящий напор! 😏🚀', true);
       return;
     }
 
@@ -261,7 +278,7 @@ startBtn.addEventListener('click', () => {
     startTime = Date.now();
     startBtn.classList.add('active');
     startBtn.textContent = 'Стоп';
-    showBubble('Оцениваю поток... 🚀');
+    showBubble('... проверяю мощь твоего потока 😂 🚀');
     timerInterval = setInterval(updateTimer, 100);
     document.body.classList.add('animate-bg');
   } else {
