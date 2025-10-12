@@ -23,8 +23,8 @@ html, body {
     -webkit-user-select: none;
     overflow: hidden;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    background: #6196ff;
     color: #0d314e;
+    background: #6196ff;
 }
 
 /* === безопасные отступы + фоновое покрытие === */
@@ -38,17 +38,18 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-
-    background: radial-gradient(100% 100% at 20% 80%, #91ebfd -8%, transparent),
-                radial-gradient(100% 100% at 80% 20%, #ffffff 0%, transparent),
-                #6196ff;
+    background: radial-gradient(100% 100% at var(--4-x-position, 20%) var(--4-y-position, 80%), #91ebfd -8%, transparent),
+                radial-gradient(100% 100% at var(--5-x-position, 80%) var(--5-y-position, 20%), #ffffff 0%, transparent),
+                #6196ff; /* ✅ исправлено */
     background-attachment: fixed;
     background-repeat: no-repeat;
     background-size: cover;
     transition: background 0.3s ease;
 }
 
-body.animate-bg { animation: main 3s infinite ease-in-out; }
+body.animate-bg {
+    animation: main 6s infinite ease-in-out; /* немного плавнее */
+}
 
 @property --4-x-position { syntax: '<percentage>'; inherits: false; initial-value: 20%; }
 @property --4-y-position { syntax: '<percentage>'; inherits: false; initial-value: 80%; }
@@ -136,7 +137,7 @@ h1 { font-size: 1.8rem; font-weight: 700; margin: 10px 0 4px; }
     font-size: 1.05rem;
     font-weight: 600;
     padding: 14px 18px;
-    border-radius: 18px 18px 0 18px;
+    border-radius: 18px 18px 0 6px; /* ✅ угол справа снизу */
     box-shadow: 0 4px 10px rgba(0,0,0,0.15);
     max-width: 95%;
     text-align: center;
