@@ -4,8 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#8ecae6">
-
 <title>Izvornic - Дебит Скважины</title>
+
+<!-- Иконка -->
+<link rel="icon" type="image/png" href="icon-512.png">
+<link rel="apple-touch-icon" href="icon-512.png">
 
 <style>
 html, body {
@@ -120,7 +123,7 @@ h1 { font-size: 1.8rem; font-weight: 700; margin: 10px 0 4px; }
 }
 #startBtn.active { background: #ff3b30; }
 
-/* ===== пузырь iMessage ===== */
+/* ===== пузырь iMessage с анимацией ===== */
 .message-bubble {
     position: relative;
     background: linear-gradient(135deg, #34c759, #2ebd50);
@@ -134,16 +137,17 @@ h1 { font-size: 1.8rem; font-weight: 700; margin: 10px 0 4px; }
     text-align: left;
     align-self: flex-end;
     margin: 40px auto 0;
-    animation: bubbleIn 0.9s ease-out forwards;
     opacity: 0;
-    transform: translateY(10px);
-}
-@keyframes bubbleIn {
-    from { opacity: 0; transform: translateY(15px); }
-    to { opacity: 1; transform: translateY(0); }
+    transform: translateY(30px);
 }
 
-/* ===== анимация тряски для ошибки ===== */
+/* Появление снизу */
+@keyframes bubbleUp {
+    0% { opacity: 0; transform: translateY(30px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Тряска при ошибке */
 @keyframes shake {
   0% { transform: translateX(0); }
   20% { transform: translateX(-6px); }
@@ -151,9 +155,6 @@ h1 { font-size: 1.8rem; font-weight: 700; margin: 10px 0 4px; }
   60% { transform: translateX(-4px); }
   80% { transform: translateX(4px); }
   100% { transform: translateX(0); }
-}
-.message-bubble.shake {
-  animation: shake 0.4s ease;
 }
 </style>
 </head>
@@ -208,26 +209,26 @@ const resultMessages = [
 
 function showBubble(text, isError = false) {
     bubble.textContent = text;
-    bubble.style.opacity = 0.6;
-    bubble.style.transform = 'translateY(-8px)';
 
-    // Всегда зелёный фон
+    // сброс анимации
+    bubble.style.animation = 'none';
+    bubble.offsetHeight; // ререндер
+
+    // фон
     bubble.style.background = 'linear-gradient(135deg, #34c759, #2ebd50)';
 
-    // Ошибка — тряска
-    if (isError) {
-        bubble.classList.remove('shake');
-        void bubble.offsetWidth;
-        bubble.classList.add('shake');
-    }
-
-    setTimeout(() => {
-        bubble.style.transform = 'translateY(0)';
-        bubble.style.opacity = 1;
-    }, 120);
+    // анимация появления снизу + тряска, если ошибка
+    bubble.style.animation = isError
+        ? 'bubbleUp 0.3s ease forwards, shake 0.4s ease'
+        : 'bubbleUp 0.3s ease forwards';
 
     if (navigator.vibrate) navigator.vibrate(40);
 }
+
+// Анимация при открытии страницы
+window.addEventListener('load', () => {
+    showBubble('Давай замерим твой напор ... 💦 😂 💪');
+});
 
 function resetValues() {
   timeEl.textContent = '0.0';
@@ -254,11 +255,9 @@ function stopTimer() {
   startBtn.classList.remove('active');
   startBtn.textContent = 'Старт';
 
-  // Случайное сообщение, не повторяя предыдущее
   let index;
-  do {
-    index = Math.floor(Math.random() * resultMessages.length);
-  } while (index === lastMessageIndex);
+  do { index = Math.floor(Math.random() * resultMessages.length); } 
+  while (index === lastMessageIndex);
   lastMessageIndex = index;
 
   showBubble(resultMessages[index]);
