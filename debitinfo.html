@@ -4,36 +4,47 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#8ecae6">
+
+<!-- === iOS / PWA настройки === -->
+<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+<link rel="apple-touch-icon" href="icon-512.png">
 <meta name="apple-mobile-web-app-title" content="Izvornic">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
 <title>Izvornic - Дебит Скважины</title>
 
 <style>
 html, body {
     margin: 0;
     height: 100%;
-    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    width: 100%;
     touch-action: none;
     -webkit-user-select: none;
     overflow: hidden;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background: #6196ff;
+    color: #0d314e;
 }
 
-/* === динамический фон === */
+/* === безопасные отступы + фоновое покрытие === */
 body {
-    --4-x-position: 20%;
-    --4-y-position: 80%;
-    --5-x-position: 80%;
-    --5-y-position: 20%;
-    background: radial-gradient(100% 100% at var(--4-x-position) var(--4-y-position), #91ebfd -8%, transparent),
-                radial-gradient(100% 100% at var(--5-x-position) var(--5-y-position), #ffffff 0%, transparent),
-                #6196ff;
+    padding: calc(env(safe-area-inset-top) + 10px)
+             calc(env(safe-area-inset-right) + 16px)
+             calc(env(safe-area-inset-bottom) + 10px)
+             calc(env(safe-area-inset-left) + 16px);
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    color: #0d314e;
+
+    background: radial-gradient(100% 100% at 20% 80%, #91ebfd -8%, transparent),
+                radial-gradient(100% 100% at 80% 20%, #ffffff 0%, transparent),
+                #6196ff;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-size: cover;
     transition: background 0.3s ease;
 }
 
@@ -51,10 +62,17 @@ body.animate-bg { animation: main 3s infinite ease-in-out; }
 }
 
 /* ===== интерфейс ===== */
-h1 { font-size: 1.8rem; font-weight: 700; margin: 20px 0 4px; }
-.subtitle { font-size: 1rem; color: #0d314e; margin-bottom: 35px; }
+h1 { font-size: 1.8rem; font-weight: 700; margin: 10px 0 4px; }
+.subtitle { font-size: 1rem; color: #0d314e; margin-bottom: 30px; }
 
-.container { width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 20px; }
+.container {
+    width: 100%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding-bottom: 20px;
+}
 
 .input-card {
     background: #fff;
@@ -110,7 +128,7 @@ h1 { font-size: 1.8rem; font-weight: 700; margin: 20px 0 4px; }
 }
 #startBtn.active { background: #ff3b30; }
 
-/* ===== iMessage bubble над элементами ===== */
+/* ===== пузырь iMessage ===== */
 .message-bubble {
     position: relative;
     background: linear-gradient(135deg, #34c759, #2ebd50);
@@ -120,7 +138,7 @@ h1 { font-size: 1.8rem; font-weight: 700; margin: 20px 0 4px; }
     padding: 14px 18px;
     border-radius: 18px 18px 0 18px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-    max-width: 90%;
+    max-width: 95%;
     text-align: center;
     align-self: flex-end;
     margin: 25px auto 0;
@@ -242,7 +260,7 @@ startBtn.addEventListener('click', () => {
     startTime = Date.now();
     startBtn.classList.add('active');
     startBtn.textContent = 'Стоп';
-    showBubble('Оцениваю поток ...');
+    showBubble('Оцениваю поток... 🚀');
     timerInterval = setInterval(updateTimer, 100);
     document.body.classList.add('animate-bg');
   } else {
