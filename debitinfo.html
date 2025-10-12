@@ -2,21 +2,29 @@
 <html lang="ru">
 <head>
     <link rel="icon" type="image/png" href="icon-512.png">
-<link rel="apple-touch-icon" href="icon-512.png">
-<meta name="theme-color" content="#8ecae6">
-<meta name="apple-mobile-web-app-title" content="Izvornic">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <link rel="apple-touch-icon" href="icon-512.png">
+    <meta name="theme-color" content="#8ecae6">
+    <meta name="apple-mobile-web-app-title" content="Izvornic">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Izvornic - Дебит Скважины</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Izvornic - Дебит Скважины</title>
+
 <style>
-body {
+html, body {
     margin: 0;
+    padding: 0;
+    overflow: hidden; /* отключаем прокрутку */
+    height: 100%;
+    touch-action: none; /* блокируем перетаскивание страницы пальцем */
+    -webkit-user-select: none; /* чтобы не выделялся текст при тапе */
+}
+
+body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     background: linear-gradient(to bottom, #8ecae6, #ffffff);
-    min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -70,12 +78,11 @@ h1 {
     color: #0d314e;
     font-weight: 700;
     padding: 6px 0;
-    font-family: inherit; /* ← теперь точно как в карточках */
-    letter-spacing: -0.5px; /* немного уплотняем, как в h2 */
-    -webkit-text-size-adjust: none; /* предотвращает автоизменение размера на iOS */
-    appearance: none; /* убирает влияние системного стиля iOS */
+    font-family: inherit;
+    letter-spacing: -0.5px;
+    -webkit-text-size-adjust: none;
+    appearance: none;
 }
-
 
 .grid {
     display: grid;
@@ -134,6 +141,7 @@ h1 {
 }
 </style>
 </head>
+
 <body>
     <h1>IZVORNIC</h1>
     <div class="subtitle">Дебит Скважины</div>
@@ -211,7 +219,6 @@ function stopTimer() {
 
 startBtn.addEventListener('click', () => {
   if (!running) {
-    // обнуляем при новом запуске
     resetValues();
 
     if (!volumeEl.value || parseFloat(volumeEl.value) <= 0) {
@@ -236,7 +243,11 @@ startBtn.addEventListener('click', () => {
 volumeEl.addEventListener('focus', () => {
   if (volumeEl.value === '0' || volumeEl.value === '0.0') volumeEl.value = '';
 });
+
+// блокируем скролл и "упругость" на iOS
+document.addEventListener('touchmove', function(event) {
+  event.preventDefault();
+}, { passive: false });
 </script>
 </body>
 </html>
-
