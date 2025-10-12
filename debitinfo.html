@@ -16,23 +16,82 @@
 html, body {
     margin: 0;
     padding: 0;
-    overflow: hidden; /* отключаем прокрутку */
+    overflow: hidden;
     height: 100%;
-    touch-action: none; /* блокируем перетаскивание страницы пальцем */
-    -webkit-user-select: none; /* чтобы не выделялся текст при тапе */
+    touch-action: none;
+    -webkit-user-select: none;
 }
 
+/* === фон с динамическим градиентом === */
 body {
+    --4-x-position: 20%;
+    --4-y-position: 80%;
+    --5-x-position: 80%;
+    --5-y-position: 20%;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    background: linear-gradient(to bottom, #8ecae6, #ffffff);
+    background: radial-gradient(100% 100% at var(--4-x-position) var(--4-y-position), #91ebfd -8%, transparent),
+                radial-gradient(100% 100% at var(--5-x-position) var(--5-y-position), #ffffff 0%, transparent),
+                #6196ff;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
     padding: 20px;
     color: #0d314e;
+    transition: background 0.3s ease;
 }
 
+body.animate-bg {
+    animation-name: main;
+    animation-iteration-count: infinite;
+    animation-duration: 3s;
+    transition-timing-function: ease-in-out;
+}
+
+/* регистрация переменных для анимации */
+@property --4-x-position {
+    syntax: '<percentage>';
+    inherits: false;
+    initial-value: 20%;
+}
+@property --4-y-position {
+    syntax: '<percentage>';
+    inherits: false;
+    initial-value: 80%;
+}
+@property --5-x-position {
+    syntax: '<percentage>';
+    inherits: false;
+    initial-value: 80%;
+}
+@property --5-y-position {
+    syntax: '<percentage>';
+    inherits: false;
+    initial-value: 20%;
+}
+
+@keyframes main {
+    25% {
+        --4-x-position: 15%;
+        --4-y-position: 15%;
+        --5-x-position: 85%;
+        --5-y-position: 80%;
+    }
+    50% {
+        --4-x-position: 80%;
+        --4-y-position: 15%;
+        --5-x-position: 15%;
+        --5-y-position: 85%;
+    }
+    100% {
+        --4-x-position: 20%;
+        --4-y-position: 80%;
+        --5-x-position: 80%;
+        --5-y-position: 20%;
+    }
+}
+
+/* ===== интерфейс ===== */
 h1 {
     font-size: 1.8rem;
     font-weight: 700;
@@ -215,6 +274,7 @@ function stopTimer() {
   startBtn.textContent = 'Старт';
   msgEl.classList.remove('error');
   msgEl.textContent = resultMessages[Math.floor(Math.random() * resultMessages.length)];
+  document.body.classList.remove('animate-bg');
 }
 
 startBtn.addEventListener('click', () => {
@@ -234,17 +294,16 @@ startBtn.addEventListener('click', () => {
     msgEl.classList.remove('error');
     msgEl.textContent = 'Оцениваю поток ...';
     timerInterval = setInterval(updateTimer, 100);
+    document.body.classList.add('animate-bg');
   } else {
     stopTimer();
   }
 });
 
-// при фокусе поле очищается, если там 0
 volumeEl.addEventListener('focus', () => {
   if (volumeEl.value === '0' || volumeEl.value === '0.0') volumeEl.value = '';
 });
 
-// блокируем скролл и "упругость" на iOS
 document.addEventListener('touchmove', function(event) {
   event.preventDefault();
 }, { passive: false });
