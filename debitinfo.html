@@ -6,178 +6,428 @@
 <meta name="theme-color" content="#8ecae6">
 <title>Izvornic</title>
 
+<!-- Favicon -->
+<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+
+<!-- Apple touch icon (для iOS) -->
+<link rel="apple-touch-icon" href="icon-512.png">
+
+<!-- PWA manifest (если будет) -->
+<link rel="manifest" href="manifest.json">
+
 <!-- Leaflet -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
+<!-- Стили -->
 <style>
-html, body { margin: 0; height: 100%; width: 100%; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; overflow: hidden; }
-.header { position:absolute; top:0; left:0; right:0; height:70px; background:rgba(255,255,255,0.9); backdrop-filter:blur(10px); display:flex; align-items:center; justify-content:space-between; padding:0 20px; box-shadow:0 2px 8px rgba(0,0,0,0.1); z-index:1000; }
-.delete-btn {
-  background:#ff3b30;
-  color:#fff;
-  border:none;
-  border-radius:6px;
-  padding:6px 12px;
-  font-weight:700;
-  cursor:pointer;
-  margin-top:6px;
-  display:block;
-  width:100%;
-  text-align:center;
-}
-.delete-btn:hover {
-  background:#e02a20;
+/* ...твой CSS остаётся без изменений... */
+</style>
+</head>
+
+
+<style>
+/* ===== Общие стили ===== */
+html, body {
+    margin: 0;
+    height: 100%;
+    width: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    overflow: hidden;
 }
 
-.header h1 { margin:0; font-size:1.4rem; font-weight:700; }
-.right-controls { display:flex; align-items:center; gap:10px; }
-.tab { background:rgba(255,255,255,0.95); padding:8px 14px; border-radius:6px; box-shadow:0 2px 6px rgba(0,0,0,0.08); cursor:pointer; font-weight:700; }
-.tab.inactive{opacity:.6;}
-.menu-btn { background:rgba(255,255,255,0.95); border-radius:6px; padding:4px 12px; box-shadow:0 2px 6px rgba(0,0,0,0.08); cursor:pointer; font-size:1.3rem; }
-.menu-dropdown { position:absolute; right:0; top:46px; background:#fff; border-radius:6px; box-shadow:0 8px 30px rgba(13,49,78,0.12); overflow:hidden; min-width:180px; display:none; }
-.menu-dropdown.show { display:block; }
-.menu-item { padding:12px 14px; border-bottom:1px solid rgba(0,0,0,0.05); cursor:pointer; }
-.menu-item:last-child{border-bottom:none;}
-.section {
-  position: absolute;
-  top: 70px; /* ниже шапки */
-  left: 0;
-  right: 0;
-  bottom: 0;
-  opacity: 0;
-  pointer-events: none;
-  display: flex; /* чтобы flex контейнер работал */
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  transition: opacity 0.3s ease;
+body.debit-bg {
+    background: radial-gradient(100% 100% at var(--4-x-position, 20%) var(--4-y-position, 80%), #91ebfd -8%, transparent),
+                radial-gradient(100% 100% at var(--5-x-position, 80%) var(--5-y-position, 20%), #ffffff 0%, transparent),
+                #6196ff;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-size: cover;
+    transition: background 0.3s ease;
 }
 
-.section.active {
-  opacity: 1;
-  pointer-events: auto;
+body.animate-bg {
+    animation: main 4s infinite ease-in-out;
 }
 
-body.debit-bg { background: radial-gradient(100% 100% at var(--4-x-position, 20%) var(--4-y-position, 80%), #91ebfd -8%, transparent), radial-gradient(100% 100% at var(--5-x-position, 80%) var(--5-y-position, 20%), #ffffff 0%, transparent), #6196ff; background-attachment: fixed; background-repeat: no-repeat; background-size: cover; transition: background 0.3s ease; }
-body.animate-bg { animation: main 4s infinite ease-in-out; }
 @property --4-x-position { syntax: '<percentage>'; inherits: false; initial-value: 20%; }
 @property --4-y-position { syntax: '<percentage>'; inherits: false; initial-value: 80%; }
 @property --5-x-position { syntax: '<percentage>'; inherits: false; initial-value: 80%; }
 @property --5-y-position { syntax: '<percentage>'; inherits: false; initial-value: 20%; }
-@keyframes main { 25% { --4-x-position: 15%; --4-y-position: 15%; --5-x-position: 85%; --5-y-position: 80%; } 50% { --4-x-position: 80%; --4-y-position: 15%; --5-x-position: 15%; --5-y-position: 85%; } 100% { --4-x-position: 20%; --4-y-position: 80%; --5-x-position: 80%; --5-y-position: 20%; } }
-h1.debit-title { font-size:1.8rem; margin:10px 0 4px; }
-.subtitle { font-size:1rem; color:#0d314e; margin-bottom:30px; }
-.container { 
-  width:100%; 
-  max-width:400px; 
-  display:flex; 
-  flex-direction:column; 
-  gap:20px; 
-  padding:20px; /* сверху и снизу + слева и справа */
-  box-sizing: border-box; /* чтобы padding не ломал ширину */
+
+@keyframes main {
+    25% { --4-x-position: 15%; --4-y-position: 15%; --5-x-position: 85%; --5-y-position: 80%; }
+    50% { --4-x-position: 80%; --4-y-position: 15%; --5-x-position: 15%; --5-y-position: 85%; }
+    100% { --4-x-position: 20%; --4-y-position: 80%; --5-x-position: 80%; --5-y-position: 20%; }
 }
 
-.input-card { background:#fff; border-radius:6px; box-shadow:0 2px 6px rgba(0,0,0,0.08); padding:16px 20px; display:flex; align-items:center; justify-content:space-between; }
-.input-card label { font-weight:600; font-size:0.95rem; }
-.input-card input { border:none; background:#f5f5f5; border-radius:6px; width:100px; text-align:center; font-size:2.1rem; color:#0d314e; font-weight:700; padding:6px 0; font-family:inherit; letter-spacing:-0.5px; -webkit-text-size-adjust:none; appearance:none; }
-.grid { display:grid; grid-template-columns:repeat(2,1fr); gap:20px; }
-.card { background:#fff; border-radius:6px; box-shadow:0 2px 6px rgba(0,0,0,0.08); text-align:center; padding:22px 0; display:flex; flex-direction:column; justify-content:center; }
-.card h2 { font-size:2.1rem; margin:0; font-weight:700; min-height:48px; }
-.card p { font-size:0.8rem; margin:6px 0 0; }
-#startBtn { background:#007aff; color:#fff; font-size:1.5rem; border:none; border-radius:6px; padding:20px 0; font-weight:600; cursor:pointer; transition: background 0.3s; }
-#startBtn.active { background:#ff3b30; }
-.message-bubble { position:relative; background:linear-gradient(135deg, #34c759, #2ebd50); color:white; font-size:1.05rem; font-weight:400; padding:14px 18px; border-radius:30px 30px 0 30px; box-shadow:0 4px 10px rgba(0,0,0,0.15); max-width:100%; text-align:left; align-self:flex-end; margin:40px auto 0; opacity:0; transform:translateY(30px); }
-@keyframes bubbleUp { 0% { opacity:0; transform:translateY(30px);} 100% { opacity:1; transform:translateY(0);} }
-@keyframes shake {0%{transform:translateX(0);}20%{transform:translateX(-6px);}40%{transform:translateX(6px);}60%{transform:translateX(-4px);}80%{transform:translateX(4px);}100%{transform:translateX(0);}}
-body.debit-bg .section { display:flex; }
-#map { position:absolute; top:0; left:0; right:0; bottom:0; z-index:1; display:none; }
+/* ===== Хедер ===== */
+.header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 70px;
+    background: rgba(255,255,255,0.9);
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    z-index: 1000;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #073144;
+}
+
+.right-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.tab {
+    background: rgba(255,255,255,0.95);
+    padding: 8px 14px;
+    border-radius: 6px;
+    color: #073144;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.tab.inactive { opacity: 0.6; }
+
+.menu-btn {
+    background: rgba(255,255,255,0.95);
+    border-radius: 6px;
+    padding: 4px 12px;
+    color: #073144;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    cursor: pointer;
+    font-size: 1.3rem;
+}
+
+.menu-dropdown {
+    position: absolute;
+    right: 0;
+    top: 46px;
+    background: #fff;
+    border-radius: 6px;
+    box-shadow: 0 8px 30px rgba(13,49,78,0.12);
+    overflow: hidden;
+    min-width: 180px;
+    display: none;
+}
+
+.menu-dropdown.show { display: block; }
+
+.menu-item {
+    padding: 12px 14px;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    color: #073144;
+    cursor: pointer;
+}
+
+.menu-item:last-child { border-bottom: none; }
+
+/* ===== Секции ===== */
+.section {
+    position: absolute;
+    top: 70px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    transition: opacity 0.3s ease;
+}
+
+.section.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* ===== Дебит ===== */
+h1.debit-title { font-size: 1.8rem; margin: 10px 0 4px; }
+.subtitle { font-size: 1rem; color:#0d314e; margin-bottom: 30px; }
+
+.container {
+    width: 100%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.input-card {
+    background: #fff;
+    border-radius: 6px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.input-card label { font-weight: 600; font-size: 0.95rem; }
+
+.input-card input {
+    border: none;
+    background: #f5f5f5;
+    border-radius: 6px;
+    width: 100px;
+    text-align: center;
+    font-size: 2.1rem;
+    color: #0d314e;
+    font-weight: 700;
+    padding: 6px 0;
+    font-family: inherit;
+    letter-spacing: -0.5px;
+    -webkit-text-size-adjust: none;
+    appearance: none;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+    gap: 20px;
+}
+
+.card {
+    background: #fff;
+    border-radius: 6px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    text-align: center;
+    padding: 22px 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.card h2 { font-size: 2.1rem; margin: 0; font-weight: 700; min-height: 48px; }
+.card p { font-size: 0.8rem; margin: 6px 0 0; }
+
+#startBtn {
+    background: #007aff;
+    color: #fff;
+    font-size: 1.5rem;
+    border: none;
+    border-radius: 6px;
+    padding: 20px 0;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+#startBtn.active { background: #ff3b30; }
+
+.message-bubble {
+    position: relative;
+    background: linear-gradient(135deg, #34c759, #2ebd50);
+    color: white;
+    font-size: 1.05rem;
+    font-weight: 400;
+    padding: 14px 18px;
+    border-radius: 30px 30px 0 30px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    max-width: 100%;
+    text-align: left;
+    align-self: flex-end;
+    margin: 40px auto 0;
+    opacity: 0;
+    transform: translateY(30px);
+}
+
+@keyframes bubbleUp {
+    0% { opacity:0; transform:translateY(30px);}
+    100% { opacity:1; transform:translateY(0);}
+}
+
+@keyframes shake {
+    0% { transform: translateX(0);}
+    20% { transform: translateX(-6px);}
+    40% { transform: translateX(6px);}
+    60% { transform: translateX(-4px);}
+    80% { transform: translateX(4px);}
+    100% { transform: translateX(0);}
+}
+
+/* ===== Карта ===== */
+#map { position: absolute; top:0; left:0; right:0; bottom:0; z-index:1; display:none; }
 #map.active { display:block; }
-.modal-backdrop { position:fixed; inset:0; background:rgba(13,49,78,0.35); display:none; align-items:center; justify-content:center; z-index:2000; }
-.modal-backdrop.show { display:flex; }
-.modal { max-width:calc(100% - 40px); background:#fff; border-radius:14px; padding:18px; box-shadow:0 12px 40px rgba(13,49,78,0.16); }
-.input-row {display:flex; gap:8px; margin-bottom:10px;}
-.input-row input {flex:1; padding:10px 6px; border-radius:6px; border:1px solid rgba(0,0,0,0.06);}
-.buttons {display:flex; gap:8px; margin-top:8px;}
-.btn {flex:1; padding:10px 12px; border-radius:6px; font-weight:700; border:none; cursor:pointer;}
-.btn.primary {background:#007aff; color:#fff;}
-.btn.ghost {background:#f5f5f5;}
+
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(13,49,78,0.35);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+}
+
+.modal-backdrop.show { display: flex; }
+
+.modal {
+    max-width: calc(100% - 40px);
+    background: #fff;
+    border-radius: 14px;
+    padding: 18px;
+    box-shadow: 0 12px 40px rgba(13,49,78,0.16);
+}
+
+.input-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.input-row input {
+    flex: 1;
+    padding: 10px 6px;
+    border-radius: 6px;
+    border: 1px solid rgba(0,0,0,0.06);
+}
+
+.buttons {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.btn {
+    flex: 1;
+    padding: 10px 12px;
+    border-radius: 6px;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+}
+
+.btn.primary { background: #007aff; color: #fff; }
+.btn.ghost { background: #f5f5f5; }
+
+/* Popup leaflet */
+.leaflet-popup-content-wrapper {
+    font-size: 1.1rem;
+    color: #073144;
+    padding: 12px 16px;
+    min-width: 180px;
+    max-width: 300px;
+    line-height: 1.4;
+}
+
+.leaflet-popup-content b { font-size: 1.2rem; }
+
+.delete-btn {
+    background: #ff3b30;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 14px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 20px;
+    width: 100%;
+    text-align: center;
+}
+
+.delete-btn:hover { background: #e02a20; }
 </style>
 </head>
+
 <body class="debit-bg animate-bg">
 
+<!-- ===== Header ===== -->
 <div class="header">
-  <h1>IZVORNIC</h1>
-  <div class="right-controls">
-    <div class="tab active" id="debitTab">Дебит</div>
-    <div class="tab inactive" id="mapTab">Карта</div>
-    <div class="top-right-menu" style="position:relative;">
-      <div class="menu-btn" id="menuBtn">⋮</div>
-      <div class="menu-dropdown" id="menuDropdown">
-        <div class="menu-item" id="exportBtn">Экспорт (JSON)</div>
-        <div class="menu-item" id="importBtn">Импорт (JSON)</div>
-        <div class="menu-item" id="toggleLayerBtn">Показать слой горизонтов</div>
-        <div class="menu-item" id="clearBtn">Очистить всё</div>
-      </div>
+    <h1>IZVORNIC</h1>
+    <div class="right-controls">
+        <div class="tab active" id="debitTab">Дебит</div>
+        <div class="tab inactive" id="mapTab">Карта</div>
+        <div class="top-right-menu" style="position: relative;">
+            <div class="menu-btn" id="menuBtn">⋮</div>
+            <div class="menu-dropdown" id="menuDropdown">
+                <div class="menu-item" id="exportBtn">Экспорт (JSON)</div>
+                <div class="menu-item" id="importBtn">Импорт (JSON)</div>
+                <div class="menu-item" id="toggleLayerBtn">Показать слой горизонтов</div>
+                <div class="menu-item" id="clearBtn">Очистить всё</div>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
 
+<!-- ===== Дебит ===== -->
 <div class="section active" id="debitSection">
-<div class="container">
-    <div class="input-card">
-        <label for="volume">🪣 Заполняемый объём</label>
-        <input type="number" id="volume" value="0" inputmode="numeric">
+    <div class="container">
+        <div class="input-card">
+            <label for="volume">🪣 Заполняемый объём</label>
+            <input type="number" id="volume" value="0" inputmode="numeric">
+        </div>
+        <div class="grid">
+            <button id="startBtn">Старт</button>
+            <div class="card">
+                <h2 id="time">0.0</h2>
+                <p>⏱ Время, секунды</p>
+            </div>
+            <div class="card">
+                <h2 id="lpm">0.0</h2>
+                <p>💧 Литры / мин</p>
+            </div>
+            <div class="card">
+                <h2 id="lph">0.0</h2>
+                <p>💦 Литры / час</p>
+            </div>
+        </div>
+        <div id="bubble" class="message-bubble">Давай замерим твой напор ... 💦 😂 💪</div>
     </div>
-    <div class="grid">
-        <button id="startBtn">Старт</button>
-        <div class="card">
-            <h2 id="time">0.0</h2>
-            <p>⏱ Время, секунды</p>
-        </div>
-        <div class="card">
-            <h2 id="lpm">0.0</h2>
-            <p>💧 Литры / мин</p>
-        </div>
-        <div class="card">
-            <h2 id="lph">0.0</h2>
-            <p>💦 Литры / час</p>
-        </div>
-    </div>
-    <div id="bubble" class="message-bubble">Давай замерим твой напор ... 💦 😂 💪</div>
-</div>
 </div>
 
-
-<!-- ===== Вкладка Карта ===== -->
+<!-- ===== Карта ===== -->
 <div class="section" id="mapSection">
-<div id="map"></div>
-<div class="modal-backdrop" id="modalBackdrop">
-  <div class="modal">
-    <h3>Добавить Скважину</h3>
-    <div id="coordText" style="font-size:0.9rem;color:rgba(13,49,78,0.7);margin-bottom:8px;"></div>
-    <div class="input-row">
-      <input id="inputName" placeholder="Название" />
-      <input id="inputDepth" placeholder="Глубина (м)" type="number" />
+    <div id="map"></div>
+
+    <!-- Модальное окно добавления -->
+    <div class="modal-backdrop" id="modalBackdrop">
+        <div class="modal">
+            <h3>Добавить Скважину</h3>
+            <div id="coordText" style="font-size:0.9rem;color:rgba(13,49,78,0.7);margin-bottom:8px;"></div>
+            <div class="input-row">
+                <input id="inputName" placeholder="Название" />
+                <input id="inputDepth" placeholder="Глубина (м)" type="number" />
+            </div>
+            <div class="input-row">
+                <input id="inputDebit" placeholder="Дебит (л/ч)" type="number" />
+            </div>
+            <div class="buttons">
+                <button class="btn ghost" id="cancelBtn">Отмена</button>
+                <button class="btn primary" id="saveBtn">Сохранить</button>
+            </div>
+        </div>
     </div>
-    <div class="input-row">
-      <input id="inputDebit" placeholder="Дебит (л/ч)" type="number" />
-    </div>
-    <div class="buttons">
-      <button class="btn ghost" id="cancelBtn">Отмена</button>
-      <button class="btn primary" id="saveBtn">Сохранить</button>
-    </div>
-  </div>
-</div>
-<input type="file" id="fileInput" accept="application/json" style="display:none" />
+
+    <input type="file" id="fileInput" accept="application/json" style="display:none" />
 </div>
 
+<!-- ===== Скрипт ===== -->
 <script>
 // ===== Вкладки =====
 const debitTab = document.getElementById('debitTab');
 const mapTab = document.getElementById('mapTab');
 const debitSection = document.getElementById('debitSection');
 const mapSection = document.getElementById('mapSection');
+const bubble = document.getElementById('bubble');
 
 debitTab.onclick = () => {
     debitTab.classList.add('active'); debitTab.classList.remove('inactive');
@@ -185,7 +435,6 @@ debitTab.onclick = () => {
     debitSection.classList.add('active'); mapSection.classList.remove('active');
     document.body.classList.add('debit-bg','animate-bg');
 
-    // Принудительное обновление рендеринга через RAF
     requestAnimationFrame(() => {
         resetValues();
         bubble.style.animation = 'none';
@@ -194,16 +443,14 @@ debitTab.onclick = () => {
     });
 };
 
-
-
 // ===== Калькулятор дебита =====
 let startBtnEl = document.getElementById('startBtn');
 let timeEl = document.getElementById('time');
 let lpmEl = document.getElementById('lpm');
 let lphEl = document.getElementById('lph');
 let volumeEl = document.getElementById('volume');
-let bubble = document.getElementById('bubble');
 let startTime, timerInterval, running=false, lastMessageIndex=-1;
+
 const resultMessages = [
   'Ведро в шоке от твоего напора! Прямо фонтанит 😂',
   'Смотри, как струя бьёт! Почти как фонтан в парке! 💧😂',
@@ -214,43 +461,82 @@ const resultMessages = [
   'Источник явно сильный, поток прям как в учебнике по гидродинамике 📘 💦',
   'Буровой дед: “Такой дебит — редкость! Даже насос удивлён.” 😳 💦'
 ];
-function showBubble(text,isError=false){ bubble.textContent=text; bubble.style.animation='none'; bubble.offsetHeight; bubble.style.background='linear-gradient(135deg, #34c759, #2ebd50)'; bubble.style.animation=isError?'bubbleUp 0.3s ease forwards, shake 0.4s ease':'bubbleUp 0.3s ease forwards'; if(navigator.vibrate) navigator.vibrate(40);}
-window.addEventListener('load',()=>{ showBubble('Давай замерим твой напор ... 💦 😂 💪'); });
-function resetValues(){ timeEl.textContent='0.0'; lpmEl.textContent='0.0'; lphEl.textContent='0.0'; }
+
+function showBubble(text,isError=false){
+    bubble.textContent = text;
+    bubble.style.animation='none';
+    bubble.offsetHeight;
+    bubble.style.background='linear-gradient(135deg, #34c759, #2ebd50)';
+    bubble.style.animation = isError ? 'bubbleUp 0.3s ease forwards, shake 0.4s ease' : 'bubbleUp 0.3s ease forwards';
+    if(navigator.vibrate) navigator.vibrate(40);
+}
+
+window.addEventListener('load', () => showBubble('Давай замерим твой напор ... 💦 😂 💪'));
+
+function resetValues(){
+    timeEl.textContent='0.0';
+    lpmEl.textContent='0.0';
+    lphEl.textContent='0.0';
+}
+
 function updateTimer(){
-  let elapsed=(Date.now()-startTime)/1000; timeEl.textContent=elapsed.toFixed(1);
-  let volume=parseFloat(volumeEl.value);
-  if(!isNaN(volume)&&volume>0){ let lpm=(volume/elapsed)*60; let lph=lpm*60; lpmEl.textContent=lpm.toFixed(1); lphEl.textContent=lph.toFixed(1);}
+    let elapsed=(Date.now()-startTime)/1000;
+    timeEl.textContent=elapsed.toFixed(1);
+    let volume=parseFloat(volumeEl.value);
+    if(!isNaN(volume)&&volume>0){
+        let lpm=(volume/elapsed)*60;
+        let lph=lpm*60;
+        lpmEl.textContent=lpm.toFixed(1);
+        lphEl.textContent=lph.toFixed(1);
+    }
 }
+
 function stopTimer(){
-  clearInterval(timerInterval); running=false; startBtnEl.classList.remove('active'); startBtnEl.textContent='Стоп';
-  let index; do{ index=Math.floor(Math.random()*resultMessages.length);}while(index===lastMessageIndex); lastMessageIndex=index;
-  showBubble(resultMessages[index]); document.body.classList.remove('animate-bg');
+    clearInterval(timerInterval);
+    running=false;
+    startBtnEl.classList.remove('active'); 
+    startBtnEl.textContent='Стоп';
+    let index; do{ index=Math.floor(Math.random()*resultMessages.length);}while(index===lastMessageIndex); 
+    lastMessageIndex=index;
+    showBubble(resultMessages[index]); 
+    document.body.classList.remove('animate-bg');
 }
+
 startBtnEl.addEventListener('click',()=>{
-  if(!running){ resetValues();
-    if(!volumeEl.value || parseFloat(volumeEl.value)<=0){ showBubble('Введи литры, я хочу почувствовать настоящий напор! 😏🚀',true); return;}
-    running=true; startTime=Date.now(); startBtnEl.classList.add('active'); startBtnEl.textContent='Стоп';
-    showBubble('... проверяю мощь твоего потока 😂 🚀'); timerInterval=setInterval(updateTimer,100); document.body.classList.add('animate-bg');
-  } else stopTimer();
+    if(!running){
+        resetValues();
+        if(!volumeEl.value || parseFloat(volumeEl.value)<=0){
+            showBubble('Введи литры, я хочу почувствовать настоящий напор! 😏🚀',true);
+            return;
+        }
+        running=true;
+        startTime=Date.now();
+        startBtnEl.classList.add('active');
+        startBtnEl.textContent='Стоп';
+        showBubble('... проверяю мощь твоего потока 😂 🚀');
+        timerInterval=setInterval(updateTimer,100);
+        document.body.classList.add('animate-bg');
+    } else stopTimer();
 });
+
 volumeEl.addEventListener('focus',()=>{ if(volumeEl.value==='0'||volumeEl.value==='0.0') volumeEl.value=''; });
 document.addEventListener('touchmove',e=>e.preventDefault(),{passive:false});
 
-// ===== Карта =====
+// ===== Карта и модальные окна =====
 let map, geologyLayer, wells = JSON.parse(localStorage.getItem('wells')||'[]'), tempLatLng=null;
 let geologyVisible=false;
 
 function saveWells(){ localStorage.setItem('wells', JSON.stringify(wells)); }
+
 function renderMarkers(){
     if(!map) return;
     map.eachLayer(l=>{ if(l instanceof L.Marker) map.removeLayer(l); });
     wells.forEach((w,i)=>{
         const marker = L.marker([w.lat, w.lng]).addTo(map);
         marker.bindPopup(`<b>${w.name}</b><br>Глубина: ${w.depth} м<br>Дебит: ${w.debit} л/ч<br><button class="delete-btn" data-index="${i}">Удалить</button>`);
-
     });
 }
+
 function setupPopupDelete(){
     map.on('popupopen', e=>{
         const btn = e.popup._contentNode.querySelector('.delete-btn');
@@ -292,7 +578,7 @@ mapTab.onclick = ()=>{
 // ===== Меню =====
 const menuBtn = document.getElementById('menuBtn');
 const menuDropdown = document.getElementById('menuDropdown');
-menuBtn.onclick=()=> menuDropdown.classList.toggle('show');
+menuBtn.onclick = ()=> menuDropdown.classList.toggle('show');
 
 // ===== Слой горизонтов =====
 document.getElementById('toggleLayerBtn').onclick = ()=>{
@@ -312,7 +598,7 @@ document.getElementById('exportBtn').onclick = ()=>{
     const dl = document.createElement('a'); dl.href=dataStr; dl.download='wells.json'; dl.click();
 };
 document.getElementById('importBtn').onclick = ()=> document.getElementById('fileInput').click();
-document.getElementById('fileInput').onchange=function(){
+document.getElementById('fileInput').onchange = function(){
     const reader = new FileReader();
     reader.onload = e=>{
         try{ wells=JSON.parse(e.target.result); saveWells(); renderMarkers(); } 
