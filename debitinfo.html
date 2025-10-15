@@ -466,7 +466,7 @@ function showBubble(text,isError=false){
     bubble.textContent = text;
     bubble.style.animation='none';
     bubble.offsetHeight;
-    bubble.style.background='linear-gradient(135deg, #34c759, #2ebd50)';
+    bubble.style.background=isError ? 'linear-gradient(135deg, #ff3b30, #ff6950)' : 'linear-gradient(135deg, #34c759, #2ebd50)';
     bubble.style.animation = isError ? 'bubbleUp 0.3s ease forwards, shake 0.4s ease' : 'bubbleUp 0.3s ease forwards';
     if(navigator.vibrate) navigator.vibrate(40);
 }
@@ -495,7 +495,7 @@ function stopTimer(){
     clearInterval(timerInterval);
     running=false;
     startBtnEl.classList.remove('active'); 
-    startBtnEl.textContent='Стоп';
+    startBtnEl.textContent='Старт';
     let index; do{ index=Math.floor(Math.random()*resultMessages.length);}while(index===lastMessageIndex); 
     lastMessageIndex=index;
     showBubble(resultMessages[index]); 
@@ -524,16 +524,24 @@ document.addEventListener('touchmove',e=>e.preventDefault(),{passive:false});
 
 // ===== Карта и модальные окна =====
 let map, geologyLayer, wells = JSON.parse(localStorage.getItem('wells')||'[]'), tempLatLng=null;
-let geologyVisible=false;
+let markers = [], geologyVisible=false;
 
 function saveWells(){ localStorage.setItem('wells', JSON.stringify(wells)); }
 
 function renderMarkers(){
     if(!map) return;
-    map.eachLayer(l=>{ if(l instanceof L.Marker) map.removeLayer(l); });
+    markers.forEach(m=>map.removeLayer(m));
+    markers = [];
     wells.forEach((w,i)=>{
-        const marker = L.marker([w.lat, w.lng]).addTo(map);
-        marker.bindPopup(`<b>${w.name}</b><br>Глубина: ${w.depth} м<br>Дебит: ${w.debit} л/ч<br><button class="delete-btn" data-index="${i}">Удалить</button>`);
+        const icon = w.success ? successIcon : failIcon;
+        const marker = L.marker([w.lat, w.lng], {icon}).addTo(map);
+        marker.bindPopup(`
+            <b>${w.name}</b><br>
+            Глубина: ${w.depth} м<br>
+            Дебит: ${w.debit} л/ч<br>
+            <button class="delete-btn" data-index="${i}">Удалить</button>
+        `);
+        markers.push(marker);
     });
 }
 
@@ -611,16 +619,37 @@ document.getElementById('fileInput').onchange = function(){
 document.getElementById('cancelBtn').onclick = ()=> document.getElementById('modalBackdrop').classList.remove('show');
 document.getElementById('saveBtn').onclick = ()=>{
     if(!tempLatLng) return;
-    const name=document.getElementById('inputName').value||'Скважина';
-    const depth=parseFloat(document.getElementById('inputDepth').value)||0;
-    const debit=parseFloat(document.getElementById('inputDebit').value)||0;
-    wells.push({name,depth,debit,lat:tempLatLng.lat,lng:tempLatLng.lng});
-    saveWells(); renderMarkers();
+    const name = document.getElementById('inputName').value || 'Скважина';
+    const depth = parseFloat(document.getElementById('inputDepth').value) || 0;
+    const debit = parseFloat(document.getElementById('inputDebit').value) || 0;
+    const success = debit > 0;
+
+    wells.push({name, depth, debit, lat: tempLatLng.lat, lng: tempLatLng.lng, success});
+    saveWells();
+    renderMarkers();
+    setupPopupDelete();
     document.getElementById('modalBackdrop').classList.remove('show');
+
     document.getElementById('inputName').value='';
     document.getElementById('inputDepth').value='';
     document.getElementById('inputDebit').value='';
 };
+
+// ===== Иконки =====
+const successIcon = L.icon({
+    iconUrl: 'marker-blue.png',
+    iconSize: [30, 40],
+    iconAnchor: [15, 40],
+    popupAnchor: [0, -35]
+});
+
+const failIcon = L.icon({
+    iconUrl: 'marker-red.png',
+    iconSize: [30, 40],
+    iconAnchor: [15, 40],
+    popupAnchor: [0, -35]
+});
 </script>
+
 </body>
 </html>
